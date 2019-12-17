@@ -12,8 +12,8 @@ class SingleLinkedlist {
     this.head = null
   }
 
-  print () {
-    let node = this.head
+  print (head) {
+    let node = head || this.head
     const arr = []
     while (node) {
       arr.push(node.val)
@@ -148,6 +148,68 @@ class SingleLinkedlist {
     this.head = a
     d.next = b
   }
+
+  createLinkedListByArray (array) {
+    let head = null
+    let node = null
+    array.forEach(element => {
+      if (head) {
+        node.next = {
+          val: element,
+          next: null
+        }
+        node = node.next
+      } else {
+        head = {
+          val: element,
+          next: null
+        }
+        node = head
+      }
+    })
+    return head
+  }
+
+  // 两个有序链表的合并
+  mergeSortedLists (list1, list2) {
+    // 有空链表的话，直接返回非空或空链表
+    if (!list1 || !list2) {
+      return list1 || list2
+    }
+
+    // 同时遍历两个链表，最小的值放入新链表，直到有链表遍历完成
+    let newList = null
+    let newNode = null
+    let node1 = list1
+    let node2 = list2
+    let min = null
+    while (node1 && node2) {
+      if (node1.val < node2.val) {
+        min = node1
+        node1 = node1.next
+      } else {
+        min = node2
+        node2 = node2.next
+      }
+      if (newList) {
+        newNode.next = min
+        newNode = newNode.next
+      } else {
+        newList = min
+        newNode = newList
+      }
+    }
+
+    // 拼接剩余的链表段
+    if (node1) {
+      newNode.next = node1
+    }
+    if (node2) {
+      newNode.next = node2
+    }
+
+    return newList
+  }
 }
 
 const list = new SingleLinkedlist()
@@ -185,4 +247,11 @@ list.clear()
 list.buildRingLink()
 const isRing2 = list.checkHasRing()
 console.log('isRing2', isRing2) // true
-list.print()
+
+list.clear()
+const list1 = list.createLinkedListByArray([1, 2, 3, 4, 5])
+const list2 = list.createLinkedListByArray([2, 2, 3, 6])
+list.print(list1)
+list.print(list2)
+const newList = list.mergeSortedLists(list1, list2)
+list.print(newList) // 1 > 2 > 2 > 2 > 3 > 3 > 4 > 5 > 6
